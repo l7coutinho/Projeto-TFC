@@ -5,6 +5,8 @@ import chaiHttp = require('chai-http');
 
 import { app } from '../app';
 import Example from '../database/models/ExampleModel';
+import { ALL_TEAMS_MOCK, ONE_TEAM_MOCK } from './teams.mock';
+import TeamsModel from '../database/models/ModelTeam';
 
 import { Response } from 'superagent';
 
@@ -39,7 +41,18 @@ describe('Seu teste', () => {
   //   expect(...)
   // });
 
-  it('Seu sub-teste', () => {
+  it('Testa se retorna todos os times', async function () {
+    sinon.stub(TeamsModel, 'findAll').resolves(ALL_TEAMS_MOCK as any);
+    const { status } = await chai.request(app).get('/teams').send(ALL_TEAMS_MOCK);
+
+    expect(status).to.be.eq(200);
+  });
+
+  it('Testa se retorna um único time', async function () {
     expect(false).to.be.eq(true);
+  });
+
+  afterEach(() => {
+    sinon.restore();
   });
 });
