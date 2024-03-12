@@ -51,13 +51,13 @@ export default class MatchService {
 
     const newMatch = await this.matchModel.createMatch(teams);
 
-    if (newMatch === null) {
+    if (!newMatch) {
       return {
-        status: 'ERROR',
+        status: 'NOT_FOUND',
         data: { message: 'There is no team with such id!' },
       };
     }
 
-    return { status: 'SUCCESSFUL', data: newMatch };
+    return { status: 'CREATED', data: newMatch };
   }
 }
