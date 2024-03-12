@@ -49,7 +49,20 @@ describe('Seu teste', () => {
   });
 
   it('Testa se retorna um único time', async function () {
-    expect(false).to.be.eq(true);
+    const id = 1;
+
+    const data = await chai.request(app).get(`/teams/${id}`)
+
+    expect(data.status).to.be.eq(200);
+    expect(data.body).to.be.deep.eq(ONE_TEAM_MOCK);
+  });
+
+  it('Testa se retorna um time inexistente', async function () {
+    const id = 190;
+    const data = await chai.request(app).get(`/teams/${id}`)
+
+    expect(data.status).to.be.eq(404);
+    expect(data.body).to.be.deep.eq({ message: 'TEAM NOT FOUND' });
   });
 
   afterEach(() => {
