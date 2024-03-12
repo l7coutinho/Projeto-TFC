@@ -1,10 +1,14 @@
 import { IMatchModel } from '../Interfaces/match/IMatchModel';
-import IMatch, { IMatchGoals } from '../Interfaces/match/IMatch';
+import IMatch, { IMatchGoals, IMatchCreate } from '../Interfaces/match/IMatch';
 import MatchModels from '../models/MatchModels';
+import TeamsModel from '../models/TeamsModels';
 import { ServiceMessage, ServiceResponse } from '../utils/ServiceResponse';
 
 export default class MatchService {
-  constructor(private matchModel: IMatchModel = new MatchModels()) { }
+  constructor(
+    private matchModel: IMatchModel = new MatchModels(),
+    private teamsModel: TeamsModel = new TeamsModel(),
+  ) { }
 
   async getAllMatches(inProgress: boolean | undefined): Promise<ServiceResponse<IMatch[]>> {
     if (inProgress === undefined) {
@@ -34,5 +38,26 @@ export default class MatchService {
       status: 'SUCCESSFUL',
       data: { message: `Updated with ${goals.awayTeamGoals} : ${goals.homeTeamGoals}` },
     };
+  }
+
+  async createMatch(teams: IMatchCreate) {
+    const { homeTeamId, awayTeamId } = teams;
+    if (homeTeamId === awayTeamId) {
+      return {
+        status: 'ERROR',
+        data: { message: 'It is not possible to create a match with two equal teams' },
+      };
+    }
+
+    const newMatch = await this.matchModel.createMatch(teams);
+
+    if (newMatch === null) {
+      return {
+        status: 'ERROR',
+        data: { message: 'There is no team with such id!' },
+      };
+    }
+
+    return { status: 'SUCCESSFUL', data: newMatch };
   }
 }

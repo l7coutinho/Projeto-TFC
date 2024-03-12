@@ -1,10 +1,11 @@
 import { IMatchModel } from '../Interfaces/match/IMatchModel';
 import ModelMatch from '../database/models/ModelMatch';
 import ModelTeam from '../database/models/ModelTeam';
-import { IMatchGoals } from '../Interfaces/match/IMatch';
+import { IMatchCreate, IMatchGoals } from '../Interfaces/match/IMatch';
 
 export default class MatchModels implements IMatchModel {
   private model = ModelMatch;
+  private teamModel = ModelTeam;
 
   async getAllMatches(): Promise<ModelMatch[]> {
     const data = await this.model.findAll({
@@ -41,5 +42,21 @@ export default class MatchModels implements IMatchModel {
       .update({ homeTeamGoals, awayTeamGoals }, { where: { id } });
 
     return affectedRows;
+  }
+
+  async createMatch(match: IMatchCreate): Promise<ModelMatch | null> {
+    const homeTeamId = this.teamModel.findOne({ where: { id: match.homeTeamId } });
+    const awayTeamId = this.teamModel.findOne({ where: { id: match.awayTeamId } });
+
+    if (!homeTeamId || !awayTeamId) {
+      return null;
+    }
+
+    const newMatch = await this.model.create({
+      ...match,
+      inProgress: true,
+    });
+
+    return newMatch;
   }
 }
