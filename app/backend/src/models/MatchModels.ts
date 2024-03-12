@@ -45,13 +45,6 @@ export default class MatchModels implements IMatchModel {
   }
 
   async createMatch(match: IMatchCreate): Promise<ModelMatch | null> {
-    const homeTeamId = this.teamModel.findOne({ where: { id: match.homeTeamId } });
-    const awayTeamId = this.teamModel.findOne({ where: { id: match.awayTeamId } });
-
-    if (!homeTeamId || !awayTeamId) {
-      return null;
-    }
-
     const newMatch = await this.model.create({
       ...match,
       inProgress: true,

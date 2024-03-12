@@ -49,15 +49,17 @@ export default class MatchService {
       };
     }
 
-    const newMatch = await this.matchModel.createMatch(teams);
+    const findHomeTeamId = await this.teamsModel.findById(homeTeamId);
+    const findAwayTeamId = await this.teamsModel.findById(awayTeamId);
 
-    if (!newMatch) {
+    if (!findAwayTeamId || !findHomeTeamId) {
       return {
         status: 'NOT_FOUND',
         data: { message: 'There is no team with such id!' },
       };
     }
 
+    const newMatch = await this.matchModel.createMatch(teams);
     return { status: 'CREATED', data: newMatch };
   }
 }
