@@ -19,6 +19,7 @@ router.patch(
 );
 router.post(
   '/',
+  authMiddleware.auth,
   (req: Request, res: Response) => matchController.createMatch(req, res),
 );
 
