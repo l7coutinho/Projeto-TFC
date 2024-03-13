@@ -44,7 +44,7 @@ export default class ILeaderboardModels {
     match.forEach((element) => {
       this.goalsFavor += element.homeTeamGoals;
       this.goalsOwn += element.awayTeamGoals;
-      if (element.homeTeamGoals > element.awayTeamGoals) { //Contabilizando vitória
+      if (element.homeTeamGoals > element.awayTeamGoals) { // Contabilizando vitória
         this.victories += 1;
       } else if (element.homeTeamGoals === element.awayTeamGoals) { // Contabilizando empates
         this.draws += 1;
