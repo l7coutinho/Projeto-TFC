@@ -2,6 +2,7 @@ import { ILeaderboard } from '../Interfaces/leaderboard/ILeaderboard';
 import ILeaderboardModels from '../Interfaces/leaderboard/ILeaderboardModels';
 import { ITeamsModel } from '../Interfaces/teams/ITeamsModel';
 import TeamsModel from '../models/TeamsModels';
+import leaderBoardSort from './utils/leaderBoard.sort';
 
 export default class LeaderboardService {
   constructor(
@@ -11,23 +12,30 @@ export default class LeaderboardService {
   async getLeaderboardHome() {
     const match = await this.model.getAllMatchesInProgressFalse();
 
-    const leaderboard = match.map((team) => {
+    const leaderboardHome = match.map((team) => {
       const row = new ILeaderboardModels(team.teamName);
-      if (team.homeMatches) row.addStatusMatch(team.homeMatches);
+      if (team.homeMatches) row.addHomeStatusMatch(team.homeMatches);
 
       return row.getPerformanceLeaderboard();
     });
 
-    const sortedLeaderboard: ILeaderboard[] = leaderboard.sort((a, b) => {
-      if (a.totalPoints !== b.totalPoints) return b.totalPoints - a.totalPoints;
-      if (a.totalVictories !== b.totalVictories) return b.totalVictories - a.totalVictories;
-      if (a.goalsBalance !== b.goalsBalance) {
-        return b.goalsBalance - a.goalsBalance;
-      }
+    const sortedHomeLeaderboard: ILeaderboard[] = leaderBoardSort(leaderboardHome);
 
-      return b.goalsFavor - a.goalsFavor;
+    return { status: 'SUCCESSFUL', data: sortedHomeLeaderboard };
+  }
+
+  async getLeaderboardAway() {
+    const match = await this.model.getAllMatchesInProgressFalse();
+
+    const awayLeaderboard = match.map((team) => {
+      const row = new ILeaderboardModels(team.teamName);
+      if (team.awayMatches) row.addAwayStatusMatch(team.awayMatches);
+
+      return row.getPerformanceLeaderboard();
     });
 
-    return { status: 'SUCCESSFUL', data: sortedLeaderboard };
+    const sortedAwayLeaderboard: ILeaderboard[] = leaderBoardSort(awayLeaderboard);
+
+    return { status: 'SUCCESSFUL', data: sortedAwayLeaderboard };
   }
 }

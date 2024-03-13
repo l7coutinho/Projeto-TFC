@@ -40,13 +40,27 @@ export default class ILeaderboardModels {
     return Number(((this.getPoints() / (this.getGames() * 3)) * 100).toFixed(2));
   }
 
-  addStatusMatch(match: IMatch[]) {
+  addHomeStatusMatch(match: IMatch[]) {
     match.forEach((element) => {
       this.goalsFavor += element.homeTeamGoals;
       this.goalsOwn += element.awayTeamGoals;
       if (element.homeTeamGoals > element.awayTeamGoals) { // Contabilizando vitória
         this.victories += 1;
       } else if (element.homeTeamGoals === element.awayTeamGoals) { // Contabilizando empates
+        this.draws += 1;
+      } else {
+        this.loss += 1; // Contabilizando derrotas
+      }
+    });
+  }
+
+  addAwayStatusMatch(match: IMatch[]) {
+    match.forEach((element) => {
+      this.goalsFavor += element.awayTeamGoals;
+      this.goalsOwn += element.homeTeamGoals;
+      if (element.awayTeamGoals > element.homeTeamGoals) { // Contabilizando vitória
+        this.victories += 1;
+      } else if (element.awayTeamGoals === element.homeTeamGoals) { // Contabilizando empates
         this.draws += 1;
       } else {
         this.loss += 1; // Contabilizando derrotas
